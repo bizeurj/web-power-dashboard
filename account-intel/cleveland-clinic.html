@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1200, initial-scale=1" />
+<title>AI Visibility Intelligence · Account Card · Cleveland Clinic · Q2 2026</title>
+<style>
+  :root {
+    --ink: #14181F;
+    --ink-2: #2B313D;
+    --ink-3: #5A626F;
+    --paper: #FAFAF6;
+    --paper-2: #F1EFE8;
+    --line: #DCD7C9;
+    --line-2: #C8C2B0;
+    --accent: #E8543A;
+    --accent-soft: #FBE6DF;
+    --green: #1F7A4D;
+    --green-soft: #DCEFE2;
+    --amber: #C98A1F;
+    --amber-soft: #F8E8C9;
+    --red: #B53A2C;
+    --red-soft: #F5DAD3;
+    --white-space: #B9B3A1;
+    --white-space-soft: #ECE9DC;
+    --serif: "Iowan Old Style", "Charter", "Source Serif Pro", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper-2); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  body { padding: 32px 24px 64px; }
+
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow: 0 2px 0 rgba(20,24,31,.04), 0 24px 60px -28px rgba(20,24,31,.18);
+    padding: 36px 44px 40px;
+    position: relative;
+  }
+
+  /* ───────── Header ───────── */
+  .doc-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 18px;
+    margin-bottom: 24px;
+  }
+  .doc-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .doc-title {
+    font-family: var(--serif);
+    font-size: 36px;
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+  }
+  .doc-sub {
+    font-size: 14px;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .doc-meta {
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+  }
+  .doc-meta strong { color: var(--ink); font-weight: 700; display: block; }
+  .classification {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    padding: 4px 8px;
+    border-radius: 2px;
+    margin-bottom: 6px;
+  }
+
+  /* ───────── Section system ───────── */
+  .section { margin-bottom: 28px; }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0 0 12px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 6px;
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .section-sub {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--ink-3);
+    font-family: var(--mono);
+    letter-spacing: 0.04em;
+  }
+
+  /* ───────── Top row: Snapshot + AI Shelf ───────── */
+  .top-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 20px;
+  }
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 16px 18px;
+    position: relative;
+  }
+  .card.tinted { background: linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%); }
+  .card-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .snapshot-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px 18px;
+    margin-top: 10px;
+  }
+  .snap-row {
+    display: flex;
+    flex-direction: column;
+    border-left: 2px solid var(--accent);
+    padding-left: 10px;
+  }
+  .snap-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    font-family: var(--mono);
+  }
+  .snap-value {
+    font-size: 14px;
+    color: var(--ink);
+    margin-top: 2px;
+    font-weight: 500;
+  }
+  .icp-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-soft);
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-family: var(--mono);
+    letter-spacing: 0.04em;
+    margin-top: 4px;
+    width: fit-content;
+  }
+  .icp-pill::before {
+    content: "";
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--green);
+  }
+
+  /* AI Shelf metric block */
+  .shelf-headline {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 16px;
+    margin: 4px 0 12px;
+  }
+  .shelf-bignum {
+    font-family: var(--serif);
+    font-size: 56px;
+    line-height: 0.95;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .shelf-bignum sub { font-size: 14px; font-weight: 500; color: var(--ink-3); margin-left: 4px; }
+  .shelf-context {
+    font-size: 12px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+  .shelf-context strong { color: var(--ink); font-weight: 700; }
+
+  .shelf-bar {
+    display: flex;
+    height: 18px;
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 8px 0 4px;
+    border: 1px solid var(--line-2);
+  }
+  .shelf-bar > div {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    font-family: var(--mono);
+    color: rgba(255,255,255,.95);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .b-achievers { background: #6B5B95; }
+  .b-workhuman { background: var(--accent); }
+  .b-oct { background: #4A6E8A; }
+  .b-awardco { background: #8A8A47; }
+  .b-bonusly { background: #B58A47; }
+
+  .shelf-legend {
+    display: flex; flex-wrap: wrap; gap: 8px 14px;
+    font-size: 11px; font-family: var(--mono);
+    margin-top: 6px;
+  }
+  .shelf-legend span { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+  .shelf-legend span::before { content: ""; width: 8px; height: 8px; border-radius: 1px; }
+  .shelf-legend .ach::before { background: #6B5B95; }
+  .shelf-legend .wh::before { background: var(--accent); }
+  .shelf-legend .oct::before { background: #4A6E8A; }
+  .shelf-legend .awd::before { background: #8A8A47; }
+  .shelf-legend .bon::before { background: #B58A47; }
+
+  .shelf-callout {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .shelf-callout strong { color: var(--accent); }
+
+  /* ───────── Prompt geography heat map ───────── */
+  .prompt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .prompt-table th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    font-family: var(--mono);
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper-2);
+  }
+  .prompt-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  .prompt-table tr:last-child td { border-bottom: none; }
+
+  .status-cell {
+    width: 36px;
+    text-align: center;
+  }
+  .status-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 0 3px var(--paper);
+  }
+  .status-green { background: var(--green); }
+  .status-amber { background: var(--amber); }
+  .status-red { background: var(--red); }
+  .status-white { background: var(--white-space); }
+
+  .prompt-quote {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .prompt-row-narrative {
+    color: var(--ink-2);
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+  .rank-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: var(--ink-2);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .rank-badge.win { background: var(--green-soft); color: var(--green); border-color: var(--green); }
+  .rank-badge.miss { background: var(--red-soft); color: var(--red); border-color: var(--red); }
+  .rank-badge.gap { background: var(--white-space-soft); color: var(--ink-3); border-style: dashed; }
+
+  .legend-row {
+    display: flex; gap: 16px; margin-top: 8px;
+    font-size: 11px; color: var(--ink-3);
+    font-family: var(--mono);
+    align-items: center;
+  }
+  .legend-row span { display: inline-flex; align-items: center; gap: 6px; }
+
+  /* ───────── Competitor shelf table ───────── */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+  .comp-card {
+    border: 1px solid var(--line);
+    background: var(--paper);
+    padding: 12px 12px 14px;
+    position: relative;
+  }
+  .comp-card.workhuman {
+    border: 2px solid var(--accent);
+    background: var(--accent-soft);
+  }
+  .comp-name {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .comp-sov {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .comp-sov strong { color: var(--ink); font-size: 13px; font-weight: 700; }
+  .comp-narrative {
+    font-size: 11.5px;
+    color: var(--ink-2);
+    line-height: 1.45;
+    margin-bottom: 8px;
+  }
+  .comp-sources {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    border-top: 1px dashed var(--line-2);
+    padding-top: 6px;
+  }
+  .comp-sources strong { display: block; color: var(--ink-3); letter-spacing: 0.06em; margin-bottom: 2px; }
+  .comp-sources span { color: var(--ink-2); }
+
+  /* ───────── AE Playbook ───────── */
+  .play-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .play-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 14px 16px;
+  }
+  .play-head {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .play-list { list-style: none; padding: 0; margin: 0; }
+  .play-list li {
+    padding: 8px 0;
+    border-bottom: 1px dotted var(--line);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .play-list li:last-child { border-bottom: none; }
+  .play-list li strong { color: var(--ink); display: block; margin-bottom: 2px; font-size: 11.5px; }
+  .play-list li em { font-style: normal; color: var(--accent); font-weight: 600; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .neutralizer .ai-says {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-3);
+    font-size: 11.5px;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .neutralizer .ai-says::before { content: "AI says: "; font-style: normal; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.12em; color: var(--ink-3); font-weight: 600; }
+  .neutralizer .ae-says {
+    color: var(--ink);
+    font-size: 11.5px;
+    line-height: 1.45;
+  }
+  .neutralizer .ae-says::before { content: "AE counter: "; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.12em; color: var(--accent); font-weight: 700; text-transform: uppercase; }
+
+  /* ───────── Stakeholder strip ───────── */
+  .stake-strip {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .stake {
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+  .stake strong {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .stake em { font-style: normal; color: var(--ink-3); }
+
+  /* ───────── Influence asks ───────── */
+  .ask-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+  .ask {
+    border: 1px solid var(--line);
+    background: var(--paper);
+    padding: 12px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .ask-num {
+    font-family: var(--serif);
+    font-size: 28px;
+    line-height: 1;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .ask-channel {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .ask-body {
+    font-size: 11.5px;
+    color: var(--ink-2);
+    line-height: 1.45;
+    flex-grow: 1;
+  }
+  .ask-owner {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--line-2);
+    font-weight: 600;
+  }
+
+  /* ───────── Footer ───────── */
+  .doc-footer {
+    margin-top: 28px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+  }
+  .doc-footer strong { color: var(--ink); }
+
+  /* Print */
+  @media print {
+    body { background: white; padding: 0; }
+    .page { box-shadow: none; border: none; padding: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="doc-header">
+    <div>
+      <div class="doc-eyebrow">AI Visibility Intelligence · Account Card</div>
+      <h1 class="doc-title">Cleveland Clinic</h1>
+      <div class="doc-sub">Healthcare system · ~80,000 caregivers · Cleveland, OH + global</div>
+    </div>
+    <div class="doc-meta">
+      <span class="classification">Sales Confidential</span>
+      <strong>Q2 2026 Briefing</strong>
+      Refreshed 2026-05-07<br/>
+      Prepared by Marketing × Revenue Ops<br/>
+      Pilot card · 2 of 50
+    </div>
+  </header>
+
+  <!-- TOP ROW: SNAPSHOT + AI SHELF -->
+  <section class="section">
+    <div class="top-grid">
+
+      <!-- Account Snapshot -->
+      <div class="card tinted">
+        <div class="card-eyebrow">01 · Account Snapshot</div>
+        <div class="snapshot-grid">
+          <div class="snap-row">
+            <span class="snap-label">Industry</span>
+            <span class="snap-value">Healthcare system, academic medical center</span>
+          </div>
+          <div class="snap-row">
+            <span class="snap-label">HQ / Geo footprint</span>
+            <span class="snap-value">Cleveland, OH · Florida · London · Abu Dhabi</span>
+          </div>
+          <div class="snap-row">
+            <span class="snap-label">Workforce posture</span>
+            <span class="snap-value">"Caregivers, not employees"; mission-led, 24/7 shift</span>
+          </div>
+          <div class="snap-row">
+            <span class="snap-label">Recognition stack signal</span>
+            <span class="snap-value">Internal "Caregiver Celebrations"; legacy milestone vendor</span>
+          </div>
+          <div class="snap-row">
+            <span class="snap-label">HR tech stack</span>
+            <span class="snap-value">Workday · Microsoft Teams · Epic adjacency</span>
+          </div>
+          <div class="snap-row">
+            <span class="snap-label">Buying signals (last 90d)</span>
+            <span class="snap-value">Nurse retention crisis · CCO public on caregiver experience</span>
+          </div>
+        </div>
+        <div style="margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <span class="icp-pill">ICP fit: high</span>
+          <span style="font-size:11px; color: var(--ink-3); font-family: var(--mono); letter-spacing: 0.04em;">Account tier: Strategic · Owner: AE M. Hassan</span>
+        </div>
+      </div>
+
+      <!-- AI Shelf -->
+      <div class="card">
+        <div class="card-eyebrow">02 · AI Shelf Position</div>
+        <div class="shelf-headline">
+          <div class="shelf-bignum">41%<sub>SoV</sub></div>
+          <div class="shelf-context">
+            Workhuman share of voice across <strong>50 prompts</strong> a Cleveland Clinic buyer is likely to ask about caregiver recognition, nurse retention, and milestone programs. <strong>Workhuman leads, with O.C. Tanner at 39%</strong>. Engines tested: ChatGPT, Perplexity, Claude, Gemini, Copilot.
+          </div>
+        </div>
+        <div class="shelf-bar" aria-label="Share of voice bar by competitor">
+          <div class="b-workhuman" style="flex: 41">41</div>
+          <div class="b-oct" style="flex: 39">39</div>
+          <div class="b-awardco" style="flex: 26">26</div>
+          <div class="b-achievers" style="flex: 24">24</div>
+          <div class="b-bonusly" style="flex: 18">18</div>
+        </div>
+        <div class="shelf-legend">
+          <span class="wh">Workhuman 41</span>
+          <span class="oct">O.C. Tanner 39</span>
+          <span class="awd">AwardCo 26</span>
+          <span class="ach">Achievers 24</span>
+          <span class="bon">Reward Gateway 18</span>
+        </div>
+        <div class="shelf-callout">
+          <strong>Strategic read:</strong> Workhuman holds the #1 narrative position for healthcare buyers, but the lead over O.C. Tanner is fragile and concentrated in milestone and service-anniversary prompt clusters. The shelf is most exposed in nurse-retention and shift-worker prompts where AwardCo is gaining. See Section 03 for the specific prompts.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PROMPT GEOGRAPHY -->
+  <section class="section">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Prompt Geography: what an LLM tells a Cleveland Clinic buyer</h2>
+      <span class="section-sub">8 priority prompts · cross-engine consensus</span>
+    </div>
+    <table class="prompt-table">
+      <thead>
+        <tr>
+          <th style="width:30px;"></th>
+          <th>Prompt the buyer is asking</th>
+          <th style="width:120px;">Workhuman position</th>
+          <th>Narrative being delivered</th>
+          <th style="width:170px;">Cited sources shaping the answer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="status-cell"><span class="status-dot status-green" title="Workhuman wins"></span></td>
+          <td class="prompt-quote">"Best employee recognition platforms for hospital systems"</td>
+          <td><span class="rank-badge win">#1 of 5</span></td>
+          <td class="prompt-row-narrative">Workhuman is the named authority for healthcare scale. Atrium Health case study is the most-cited proof point across engines.</td>
+          <td class="prompt-row-narrative">Becker's Hospital Review · HBR · SHRM</td>
+        </tr>
+        <tr>
+          <td class="status-cell"><span class="status-dot status-amber" title="Mentioned, not winning"></span></td>
+          <td class="prompt-quote">"How to reduce nurse turnover with recognition programs"</td>
+          <td><span class="rank-badge">#2 of 4</span></td>
+          <td class="prompt-row-narrative">Workhuman is named, but AwardCo and OCT lead with nurse-specific framing. Hedge: "Workhuman is broader than nursing-specific."</td>
+          <td class="prompt-row-narrative">AONL · ANA · Becker's · vendor PR</td>
+        </tr>
+        <tr>
+          <td class="status-cell"><span class="status-dot status-amber"></span></td>
+          <td class="prompt-quote">"Service anniversary and milestone programs for hospitals"</td>
+          <td><span class="rank-badge">#2 of 3</span></td>
+          <td class="prompt-row-narrative">O.C. Tanner owns this prompt cluster on the strength of 95-year heritage in healthcare milestones. Workhuman framed as "modern alternative."</td>
+          <td class="prompt-row-narrative">OCT Institute · SHRM · industry trades</td>
+        </tr>
+        <tr>
+          <td class="status-cell"><span class="status-dot status-red" title="Workhuman absent"></span></td>
+          <td class="prompt-quote">"Recognition platforms for shift workers and 24/7 operations"</td>
+          <td><span class="rank-badge miss">not in top 3</span></td>
+          <td class="prompt-row-narrative">AwardCo, Reward Gateway, Achievers named for shift-worker UX. Workhuman absent. This is a healthcare-specific gap to close.</td>
+          <td class="prompt-row-narrative">Vendor docs · UKG ecosystem · G2</td>
+        </tr>
+        <tr>
+          <td class="status-cell"><span class="status-dot status-green"></span></td>
+          <td class="prompt-quote">"Caregiver experience platforms for healthcare"</td>
+          <td><span class="rank-badge win">#1 of 4</span></td>
+          <td class="prompt-row-narrative">Workhuman owns the "caregiver experience" framing thanks to Atrium published outcomes data and the Workhuman + healthcare research line.</td>
+          <td class="prompt-row-narrative">HBR · Workhuman healthcare research · Becker's</td>
+        </tr>
+        <tr>
+          <td class="status-cell"><span class="status-dot status-amber"></span></td>
+          <td class="prompt-quote">"Healthcare worker burnout retention solutions"</td>
+          <td><span class="rank-badge">#3 of 6</span></td>
+          <td class="prompt-row-narrative">Engagement and well-being vendors lead this prompt (Limeade, Modern Health, Gympass). Workhuman is mentioned for recognition's role in burnout, not as the primary solution.</td>
+          <td class="prompt-row-narrative">McKinsey · Gallup · industry research</td>
+        </tr>
+        <tr>
+          <td class="status-cell"><span class="status-dot status-white" title="White space"></span></td>
+          <td class="prompt-quote">"Cleveland Clinic caregiver experience"</td>
+          <td><span class="rank-badge gap">white space</span></td>
+          <td class="prompt-row-narrative">Internal-only narrative; no vendor surfaced. Opportunity to seed Workhuman as the caregiver-recognition partner of record through case study or thought leadership.</td>
+          <td class="prompt-row-narrative">Cleveland Clinic press · CCO public talks</td>
+        </tr>
+        <tr>
+          <td class="status-cell"><span class="status-dot status-green"></span></td>
+          <td class="prompt-quote">"ROI of employee recognition in healthcare"</td>
+          <td><span class="rank-badge win">cited authority</span></td>
+          <td class="prompt-row-narrative">Workhuman + Gallup retention math is the cited source for healthcare-specific recognition ROI. Strong base to build deeper account-specific economics on.</td>
+          <td class="prompt-row-narrative">HBR · Gallup + Workhuman · Becker's</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="legend-row">
+      <span><span class="status-dot status-green"></span> Workhuman wins</span>
+      <span><span class="status-dot status-amber"></span> Mentioned, not leading</span>
+      <span><span class="status-dot status-red"></span> Absent or losing</span>
+      <span><span class="status-dot status-white"></span> White space (no vendor named)</span>
+    </div>
+  </section>
+
+  <!-- COMPETITOR SHELF -->
+  <section class="section">
+    <div class="section-head">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Competitor Shelf: narratives the AI engines are reinforcing</h2>
+      <span class="section-sub">Source: Profound · 90-day window</span>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-card workhuman">
+        <div class="comp-name">Workhuman</div>
+        <div class="comp-sov">SoV <strong>41%</strong> · trend ▲</div>
+        <div class="comp-narrative">"Caregiver recognition at scale, science-backed." Owns the healthcare ROI narrative on the strength of Atrium and Gallup studies.</div>
+        <div class="comp-sources"><strong>Cited via</strong><span>HBR · Becker's · Workhuman + Gallup · SHRM</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">O.C. Tanner</div>
+        <div class="comp-sov">SoV <strong>39%</strong> · trend →</div>
+        <div class="comp-narrative">"95 years of healthcare milestone heritage." Strongest competitor in service-anniversary and tenure-recognition prompts.</div>
+        <div class="comp-sources"><strong>Cited via</strong><span>OCT Institute · SHRM · industry trades</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">AwardCo</div>
+        <div class="comp-sov">SoV <strong>26%</strong> · trend ▲</div>
+        <div class="comp-narrative">"Frontline-friendly, fast deploy, Amazon catalog." Gaining ground on shift-worker and nurse-retention prompts.</div>
+        <div class="comp-sources"><strong>Cited via</strong><span>AONL · Inc · AwardCo PR · G2</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Achievers</div>
+        <div class="comp-sov">SoV <strong>24%</strong> · trend →</div>
+        <div class="comp-narrative">"Enterprise platform, broad integrations." Less healthcare-specific narrative than the leaders, but credible on tech foundations.</div>
+        <div class="comp-sources"><strong>Cited via</strong><span>Forbes · Gartner MQ · G2 reviews</span></div>
+      </div>
+      <div class="comp-card">
+        <div class="comp-name">Reward Gateway</div>
+        <div class="comp-sov">SoV <strong>18%</strong> · trend ▲</div>
+        <div class="comp-narrative">"Frontline engagement, benefits-adjacent." UK and EU healthcare presence; emerging in US shift-worker prompts.</div>
+        <div class="comp-sources"><strong>Cited via</strong><span>RG case studies · HR Brew · G2</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AE PLAYBOOK -->
+  <section class="section">
+    <div class="section-head">
+      <span class="section-num">05</span>
+      <h2 class="section-title">AE Playbook: how to use this in the next discovery call</h2>
+      <span class="section-sub">10-minute script · proof points · stakeholder map</span>
+    </div>
+    <div class="play-grid">
+      <div class="play-card">
+        <div class="play-head">Discovery openers</div>
+        <ul class="play-list">
+          <li>
+            <em>Pattern interrupt</em>
+            <strong>Lead with the AI shelf.</strong>
+            "When a healthcare CHRO asks ChatGPT about caregiver recognition platforms, here's what comes back. There's a specific narrative gap I want to walk through with you."
+          </li>
+          <li>
+            <em>Tie to public posture</em>
+            <strong>Anchor on caregiver experience.</strong>
+            "The 'caregivers, not employees' framing is doing real cultural work. The operational question is whether your recognition system reinforces that framing every day at every shift change."
+          </li>
+          <li>
+            <em>Insider signal</em>
+            <strong>Reference the nurse retention math.</strong>
+            "Cleveland Clinic-scale nurse turnover is roughly $50K all-in per departure. Recognition science shifts that curve in a way that's measurable inside 12 months."
+          </li>
+        </ul>
+      </div>
+      <div class="play-card neutralizer">
+        <div class="play-head">Hedge neutralizers</div>
+        <ul class="play-list">
+          <li>
+            <div class="ai-says">"O.C. Tanner has a 95-year heritage in healthcare milestones."</div>
+            <div class="ae-says">Heritage is a brochure asset. The buyer's measurable outcome is retention, where Workhuman + Atrium published a 25% reduction in voluntary turnover. Heritage does not bend that curve.</div>
+          </li>
+          <li>
+            <div class="ai-says">"AwardCo offers a faster, frontline-friendly deploy."</div>
+            <div class="ae-says">Frontline UX is necessary, not sufficient. The differentiator is recognition science wired to retention outcomes, with healthcare-specific ROI data the AE walks through live.</div>
+          </li>
+          <li>
+            <div class="ai-says">"Workhuman is broader than nurse-specific recognition."</div>
+            <div class="ae-says">That breadth is the asset. Cleveland Clinic has nurses, physicians, allied health, support staff, and global non-clinical caregivers. A nurse-only tool fragments the experience and the data layer.</div>
+          </li>
+        </ul>
+      </div>
+      <div class="play-card">
+        <div class="play-head">Proof points to bring</div>
+        <ul class="play-list">
+          <li>
+            <em>Closest analogue</em>
+            <strong>Atrium Health case study.</strong>
+            Comparable academic medical center scale, published retention and engagement outcomes. The single strongest reference for this account.
+          </li>
+          <li>
+            <em>Cultural analogue</em>
+            <strong>Northwell Health frontline pattern.</strong>
+            Similar shift-worker mix, similar mission language. Show how the operating model maps to a 24/7 caregiver workforce.
+          </li>
+          <li>
+            <em>Economic analogue</em>
+            <strong>Workhuman + Gallup retention math.</strong>
+            Quantified payback per recognition event in healthcare. Use this to neutralize CFO-side hedges in the room.
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="stake-strip">
+      <div class="stake"><strong>Champion</strong>Chief Caregiver Officer<br/><em>caregiver experience owner</em></div>
+      <div class="stake"><strong>Economic buyer</strong>Chief HR Officer<br/><em>budget, total rewards</em></div>
+      <div class="stake"><strong>Mandate carrier</strong>CEO + Chief Nursing Officer<br/><em>retention crisis owners</em></div>
+      <div class="stake"><strong>ROI gate</strong>CFO<br/><em>turnover cost, payback</em></div>
+      <div class="stake"><strong>Integration gate</strong>CIO<br/><em>Workday + Epic adjacency</em></div>
+    </div>
+  </section>
+
+  <!-- INFLUENCE ASKS -->
+  <section class="section">
+    <div class="section-head">
+      <span class="section-num">06</span>
+      <h2 class="section-title">Influence Engineering Asks: 90-day plays to shift the AI shelf</h2>
+      <span class="section-sub">Marketing → Sales loop · Q3 sprint candidates</span>
+    </div>
+    <div class="ask-grid">
+      <div class="ask">
+        <div class="ask-num">1</div>
+        <div class="ask-channel">Earned PR</div>
+        <div class="ask-body">Pitch a Workhuman healthcare retention thesis to Becker's Hospital Review and HR Brew. Goal: surface in nurse-retention prompts within 60 days.</div>
+        <div class="ask-owner">Owner: Comms · Q3W2</div>
+      </div>
+      <div class="ask">
+        <div class="ask-num">2</div>
+        <div class="ask-channel">Owned content</div>
+        <div class="ask-body">Publish a "Caregiver Recognition at Scale" hub with a 80K-caregiver economic model and shift-worker UX framing, structured for AI retrieval.</div>
+        <div class="ask-owner">Owner: Web + Content · Q3W4</div>
+      </div>
+      <div class="ask">
+        <div class="ask-num">3</div>
+        <div class="ask-channel">Industry body</div>
+        <div class="ask-body">Sponsor or contribute thought leadership to AONL and the American Hospital Association on recognition's role in nurse retention.</div>
+        <div class="ask-owner">Owner: Field Marketing · Q3W6</div>
+      </div>
+      <div class="ask">
+        <div class="ask-num">4</div>
+        <div class="ask-channel">Paid AI</div>
+        <div class="ask-body">Test paid placement on Perplexity and ChatGPT-search for "recognition platforms for hospital systems" and "nurse retention recognition." Track SoV weekly.</div>
+        <div class="ask-owner">Owner: Paid Media · Q3W3</div>
+      </div>
+      <div class="ask">
+        <div class="ask-num">5</div>
+        <div class="ask-channel">Shift-worker narrative</div>
+        <div class="ask-body">Launch a shift-worker UX story arc with frontline customer voices, sized to compete in the prompt cluster AwardCo is gaining on today.</div>
+        <div class="ask-owner">Owner: Brand · Q3W8</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="doc-footer">
+    <div>
+      <strong>Sources:</strong> Profound (AI search visibility), GA4 (engagement context), Google Search Console (organic adjacency), public Cleveland Clinic press and CCO talks, named third-party publications cited above. <strong>Methodology:</strong> 50-prompt account-relevance set sampled across five engines on a 90-day rolling window. Prompt set re-validated quarterly.<br/>
+      <strong>Distribution:</strong> Account-owning AE, Strategic Account Director, Sales VP, CRO, CMO. Not for external distribution.
+    </div>
+    <div style="text-align:right;">
+      <strong>Workhuman</strong><br/>
+      AI Visibility Intelligence Program<br/>
+      v0.1 pilot · 2026-05-07
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

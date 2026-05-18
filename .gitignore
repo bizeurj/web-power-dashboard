@@ -1,0 +1,27 @@
+# Secrets and credentials
+.env
+.env.local
+*.service-account.json
+service-account.json
+credentials/
+
+# Daily snapshot output (regenerated)
+data/snapshots/*.json
+!data/snapshots/.gitkeep
+
+# Node
+node_modules/
+npm-debug.log*
+.DS_Store
+
+# Next.js build output
+web/.next/
+web/out/
+web/.vercel/
+
+# Local snapshot
+data/snapshot.json
+
+# Editor
+.vscode/
+.idea/

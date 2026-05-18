@@ -1,0 +1,21 @@
+{
+  "name": "workhuman-web-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Daily KPI dashboard for workhuman.com and workhuman.live (GA4 + Profound).",
+  "type": "module",
+  "scripts": {
+    "fetch": "node src/orchestrator.js",
+    "fetch:ga4": "node src/fetchers/ga4.js",
+    "fetch:profound": "node src/fetchers/profound.js",
+    "verify": "node src/verify.js"
+  },
+  "dependencies": {
+    "@google-analytics/data": "^4.12.0",
+    "dotenv": "^16.4.5",
+    "googleapis": "^171.4.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1200, initial-scale=1" />
+<title>Prompt Geography · AI Visibility Intelligence</title>
+<style>
+  :root {
+    --ink: #14181F;
+    --ink-2: #2B313D;
+    --ink-3: #5A626F;
+    --paper: #FAFAF6;
+    --paper-2: #F1EFE8;
+    --line: #DCD7C9;
+    --line-2: #C8C2B0;
+    --accent: #E8543A;
+    --accent-soft: #FBE6DF;
+    --green: #1F7A4D;
+    --green-soft: #DCEFE2;
+    --amber: #C98A1F;
+    --amber-soft: #F8E8C9;
+    --red: #B53A2C;
+    --red-soft: #F5DAD3;
+    --neutral: #B9B3A1;
+    --serif: "Iowan Old Style", "Charter", "Source Serif Pro", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper-2); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  body { padding: 24px 20px 60px; }
+
+  .tile {
+    max-width: 1240px;
+    margin: 0 auto;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow: 0 2px 0 rgba(20,24,31,.04), 0 24px 60px -28px rgba(20,24,31,.18);
+    padding: 28px 32px 32px;
+  }
+
+  /* Header */
+  .tile-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: end;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 16px;
+    margin-bottom: 22px;
+  }
+  .tile-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .tile-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0 0 4px;
+  }
+  .tile-sub {
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .tile-meta {
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+  }
+  .tile-meta strong { color: var(--ink); display: block; font-weight: 700; }
+  .pill {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    padding: 3px 7px;
+    border-radius: 2px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  /* Section heads */
+  .section { margin-bottom: 26px; }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0 0 12px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 6px;
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+  .section-sub {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--ink-3);
+    font-family: var(--mono);
+    letter-spacing: 0.04em;
+  }
+
+  /* SoV leaderboard */
+  .sov-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+  .sov-list { display: flex; flex-direction: column; gap: 4px; }
+  .sov-row {
+    display: grid;
+    grid-template-columns: 18px 130px 1fr 56px;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    padding: 4px 0;
+  }
+  .sov-rank { font-family: var(--mono); color: var(--ink-3); font-size: 10px; text-align: right; }
+  .sov-name { font-weight: 500; color: var(--ink); }
+  .sov-name.is-wh { color: var(--accent); font-weight: 700; }
+  .sov-bar-track {
+    height: 14px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .sov-bar-fill {
+    height: 100%;
+    background: var(--ink-2);
+    transition: width .25s ease;
+  }
+  .sov-bar-fill.is-wh { background: var(--accent); }
+  .sov-pct {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-align: right;
+    color: var(--ink-2);
+    font-weight: 600;
+  }
+  .sov-pct.is-wh { color: var(--accent); }
+
+  /* Topic strip */
+  .topic-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .topic-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 10px 12px;
+    transition: background .15s ease, border-color .15s ease;
+    cursor: pointer;
+  }
+  .topic-card.is-active {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+  .topic-card:hover { background: var(--paper-2); }
+  .topic-card.is-active:hover { background: var(--accent-soft); }
+  .topic-name {
+    font-family: var(--serif);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    line-height: 1.25;
+  }
+  .topic-volume {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .topic-volume strong { color: var(--ink); font-weight: 700; }
+
+  /* Prompts table */
+  .prompt-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+  .prompt-controls select,
+  .prompt-controls input {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 6px 9px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 2px;
+  }
+  .prompt-controls input { flex-grow: 1; max-width: 360px; }
+  .prompt-controls .label { color: var(--ink-3); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--ink-3);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    padding: 6px 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .reset-btn:hover { background: var(--paper-2); color: var(--ink); }
+
+  .prompt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .prompt-table th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 600;
+    font-family: var(--mono);
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper-2);
+  }
+  .prompt-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  .prompt-text {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .topic-tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .citation-cell {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-2);
+    text-align: right;
+    font-weight: 600;
+  }
+
+  /* Heat strip = mini bar showing intensity */
+  .heat-strip {
+    width: 100%;
+    height: 8px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: 1px;
+    position: relative;
+    overflow: hidden;
+  }
+  .heat-strip-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent) 100%);
+  }
+
+  /* Status / methodology footer */
+  .meth-card {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 10px 14px;
+    margin-top: 18px;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .meth-card strong { color: var(--accent); font-weight: 700; }
+
+  .tile-footer {
+    margin-top: 24px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+  }
+  .tile-footer strong { color: var(--ink); }
+
+  /* Loading + error states */
+  .state-msg {
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--ink-3);
+    font-size: 13px;
+    background: var(--paper-2);
+    border: 1px dashed var(--line-2);
+    border-radius: 2px;
+  }
+  .state-msg strong { color: var(--ink); display: block; margin-bottom: 4px; font-size: 14px; }
+  .state-msg code { font-family: var(--mono); font-size: 11px; background: var(--paper); padding: 2px 5px; border: 1px solid var(--line); }
+</style>
+</head>
+<body>
+<div class="tile">
+
+  <!-- HEADER -->
+  <header class="tile-header">
+    <div>
+      <div class="tile-eyebrow">AI Visibility Intelligence · Live tile</div>
+      <h1 class="tile-title">Prompt Geography</h1>
+      <div class="tile-sub">What buyers are asking AI engines, and who's winning the answer.</div>
+    </div>
+    <div class="tile-meta">
+      <span class="pill">Live</span>
+      <strong id="metaTitle">Loading…</strong>
+      <span id="metaWindow"></span><br/>
+      <span id="metaSource">Source: Profound</span>
+    </div>
+  </header>
+
+  <!-- AI SHELF + TOPIC STRIP -->
+  <section class="section">
+    <div class="section-head">
+      <span class="section-num">01</span>
+      <h2 class="section-title">AI Shelf Leaderboard</h2>
+      <span class="section-sub" id="leaderSub">Top 12 brands by share of voice</span>
+    </div>
+    <div class="sov-grid">
+      <div class="sov-list" id="sovListA"></div>
+      <div class="sov-list" id="sovListB"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Topic Clusters</h2>
+      <span class="section-sub">Click a topic to filter prompts below</span>
+    </div>
+    <div class="topic-strip" id="topicStrip"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Prompts buyers are asking</h2>
+      <span class="section-sub" id="promptCount">…</span>
+    </div>
+    <div class="prompt-controls">
+      <span class="label">Topic</span>
+      <select id="topicSelect"><option value="">All topics</option></select>
+      <span class="label">Search</span>
+      <input id="promptSearch" type="text" placeholder="Filter prompts by keyword…" />
+      <button class="reset-btn" id="resetBtn">Reset</button>
+    </div>
+    <table class="prompt-table">
+      <thead>
+        <tr>
+          <th style="width:50%;">Prompt</th>
+          <th style="width:25%;">Topic cluster</th>
+          <th style="width:15%;">Citation intensity</th>
+          <th style="width:10%; text-align:right;">Volume</th>
+        </tr>
+      </thead>
+      <tbody id="promptBody">
+        <tr><td colspan="4" class="state-msg">Loading prompt data…</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- METHODOLOGY -->
+  <div class="meth-card" id="methCard">
+    <strong>How to read this tile:</strong> Share of voice and citation volume are pulled live from Profound's category-level visibility report and citations report. Topic clusters represent how Profound groups the prompt taxonomy. <strong>Next data layer</strong> for the full Account Intelligence Card program: a per-prompt competitive crosstab (prompt × asset_name) so we can color-code which competitor wins each individual prompt. Add this as a new dimension call in <code>src/fetchers/profound.js</code>.
+  </div>
+
+  <footer class="tile-footer">
+    <strong>Sources:</strong> <span id="footSrc">Profound API via project orchestrator</span>. <strong>Refresh cadence:</strong> on snapshot rebuild. <strong>Distribution:</strong> Sales leadership, AE enablement.
+  </footer>
+
+</div>
+
+<script>
+(function() {
+  const SNAPSHOT_PATHS = [
+    '../data/snapshot.json',
+    '../data/snapshots/2026-05-05.json',
+    'data/snapshot.json',
+    './snapshot.json'
+  ];
+
+  async function loadSnapshot() {
+    for (const path of SNAPSHOT_PATHS) {
+      try {
+        const r = await fetch(path);
+        if (!r.ok) continue;
+        const json = await r.json();
+        return { json, path };
+      } catch (e) {
+        // try next
+      }
+    }
+    throw new Error('Could not load any snapshot file. Tried: ' + SNAPSHOT_PATHS.join(', '));
+  }
+
+  function fmtPct(x) { return (x * 100).toFixed(2) + '%'; }
+  function fmtInt(x) { return Number(x).toLocaleString(); }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function parseVisibility(prof) {
+    const dom = prof?.domains?.[0];
+    if (!dom?.visibility?.data) return [];
+    const metrics = dom.visibility.info?.query?.metrics || ['average_position','mentions_count','share_of_voice','visibility_score'];
+    return dom.visibility.data.map(r => {
+      const o = { asset: r.dimensions[0] };
+      metrics.forEach((m, i) => o[m] = r.metrics[i]);
+      return o;
+    }).sort((a, b) => (b.share_of_voice || 0) - (a.share_of_voice || 0));
+  }
+
+  function parseTopics(prof) {
+    const t = prof?.content?.byTopic;
+    if (!t?.data) return [];
+    return t.data.map(r => ({
+      topic: r.dimensions[0],
+      count: r.metrics[1] || r.metrics[0]
+    })).sort((a, b) => b.count - a.count);
+  }
+
+  function parsePrompts(prof) {
+    const p = prof?.content?.promptsByTopic;
+    if (!p?.data) return [];
+    return p.data.map(r => ({
+      prompt: r.dimensions[0],
+      topic: r.dimensions[1],
+      count: r.metrics[1] || r.metrics[0]
+    })).sort((a, b) => b.count - a.count);
+  }
+
+  function renderLeaderboard(assets) {
+    const top = assets.slice(0, 12);
+    const max = top.reduce((m, x) => Math.max(m, x.share_of_voice || 0), 0) || 1;
+    const a = document.getElementById('sovListA');
+    const b = document.getElementById('sovListB');
+    a.innerHTML = '';
+    b.innerHTML = '';
+    top.forEach((row, i) => {
+      const isWh = row.asset.toLowerCase() === 'workhuman';
+      const w = ((row.share_of_voice || 0) / max) * 100;
+      const html = `
+        <div class="sov-row">
+          <span class="sov-rank">${i + 1}</span>
+          <span class="sov-name ${isWh ? 'is-wh' : ''}">${escapeHtml(row.asset)}</span>
+          <span class="sov-bar-track"><span class="sov-bar-fill ${isWh ? 'is-wh' : ''}" style="width: ${w.toFixed(1)}%;"></span></span>
+          <span class="sov-pct ${isWh ? 'is-wh' : ''}">${fmtPct(row.share_of_voice || 0)}</span>
+        </div>`;
+      (i < 6 ? a : b).insertAdjacentHTML('beforeend', html);
+    });
+  }
+
+  let currentTopicFilter = '';
+  let currentSearch = '';
+  let _allPrompts = [];
+  let _allTopics = [];
+
+  function renderTopicStrip(topics) {
+    const top = topics.slice(0, 8);
+    const totalMax = top.reduce((m, x) => Math.max(m, x.count), 0) || 1;
+    const el = document.getElementById('topicStrip');
+    el.innerHTML = top.map(t => `
+      <div class="topic-card" data-topic="${escapeHtml(t.topic)}">
+        <div class="topic-name">${escapeHtml(t.topic)}</div>
+        <div class="topic-volume"><strong>${fmtInt(t.count)}</strong> citations</div>
+      </div>
+    `).join('');
+    el.querySelectorAll('.topic-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const t = card.getAttribute('data-topic');
+        currentTopicFilter = (currentTopicFilter === t) ? '' : t;
+        document.getElementById('topicSelect').value = currentTopicFilter;
+        applyFilters();
+      });
+    });
+  }
+
+  function renderTopicSelect(topics) {
+    const sel = document.getElementById('topicSelect');
+    topics.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.topic;
+      opt.textContent = t.topic + '  (' + fmtInt(t.count) + ')';
+      sel.appendChild(opt);
+    });
+  }
+
+  function renderPrompts(rows) {
+    const body = document.getElementById('promptBody');
+    document.getElementById('promptCount').textContent = rows.length + ' prompts';
+    if (!rows.length) {
+      body.innerHTML = '<tr><td colspan="4" class="state-msg">No prompts match the current filter.</td></tr>';
+      return;
+    }
+    const max = rows.reduce((m, r) => Math.max(m, r.count), 0) || 1;
+    body.innerHTML = rows.map(r => {
+      const w = ((r.count / max) * 100).toFixed(1);
+      return `
+        <tr>
+          <td class="prompt-text">"${escapeHtml(r.prompt)}"</td>
+          <td><span class="topic-tag">${escapeHtml(r.topic)}</span></td>
+          <td><span class="heat-strip"><span class="heat-strip-fill" style="width:${w}%"></span></span></td>
+          <td class="citation-cell">${fmtInt(r.count)}</td>
+        </tr>`;
+    }).join('');
+  }
+
+  function applyFilters() {
+    const search = currentSearch.toLowerCase();
+    let rows = _allPrompts;
+    if (currentTopicFilter) rows = rows.filter(r => r.topic === currentTopicFilter);
+    if (search) rows = rows.filter(r => r.prompt.toLowerCase().includes(search));
+    rows = rows.slice(0, 60);
+    renderPrompts(rows);
+    document.querySelectorAll('.topic-card').forEach(card => {
+      card.classList.toggle('is-active', card.getAttribute('data-topic') === currentTopicFilter);
+    });
+  }
+
+  function bindControls() {
+    document.getElementById('topicSelect').addEventListener('change', e => {
+      currentTopicFilter = e.target.value;
+      applyFilters();
+    });
+    document.getElementById('promptSearch').addEventListener('input', e => {
+      currentSearch = e.target.value;
+      applyFilters();
+    });
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      currentTopicFilter = '';
+      currentSearch = '';
+      document.getElementById('topicSelect').value = '';
+      document.getElementById('promptSearch').value = '';
+      applyFilters();
+    });
+  }
+
+  function renderError(err, triedPaths) {
+    const body = document.getElementById('promptBody');
+    body.innerHTML = `<tr><td colspan="4" class="state-msg">
+      <strong>Snapshot not found</strong>
+      Could not load Profound data. The tile expects a snapshot.json file. Tried these paths:<br/>
+      ${triedPaths.map(p => '<code>' + escapeHtml(p) + '</code>').join(' &nbsp; ')}
+      <br/><br/>To populate, run <code>node src/orchestrator.js</code> from the project root, or place a snapshot file at <code>../data/snapshot.json</code>.
+      <br/><br/>Error: ${escapeHtml(err.message)}
+    </td></tr>`;
+    document.getElementById('metaTitle').textContent = 'Snapshot unavailable';
+  }
+
+  async function init() {
+    bindControls();
+    let snap;
+    try {
+      snap = await loadSnapshot();
+    } catch (e) {
+      renderError(e, SNAPSHOT_PATHS);
+      return;
+    }
+    const json = snap.json;
+    const prof = json?.sources?.profound;
+    if (!prof) {
+      renderError(new Error('Snapshot loaded but no Profound source present'), [snap.path]);
+      return;
+    }
+
+    const generatedAt = json.generatedAt || prof.fetchedAt || '';
+    const window = prof.lookbackDays ? (prof.lookbackDays + '-day window') : '';
+    document.getElementById('metaTitle').textContent = generatedAt ? new Date(generatedAt).toISOString().slice(0, 10) : 'Latest';
+    document.getElementById('metaWindow').textContent = window;
+    document.getElementById('metaSource').textContent = 'Source: ' + snap.path;
+    document.getElementById('footSrc').textContent = 'Profound (snapshot ' + (snap.path) + ', generated ' + (generatedAt || 'unknown') + ')';
+
+    const assets = parseVisibility(prof);
+    const topics = parseTopics(prof);
+    _allTopics = topics;
+    _allPrompts = parsePrompts(prof);
+
+    renderLeaderboard(assets);
+    renderTopicStrip(topics);
+    renderTopicSelect(topics);
+    applyFilters();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
