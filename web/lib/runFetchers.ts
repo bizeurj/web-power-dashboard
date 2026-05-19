@@ -20,12 +20,36 @@ type FetcherResult =
   | { ok: true; value: unknown }
   | { ok: false; error: string };
 
-async function settle<T>(p: Promise<T>): Promise<FetcherResult> {
+async function settle<T>(name: string, p: Promise<T>): Promise<FetcherResult> {
   try {
     const value = await p;
     return { ok: true, value };
   } catch (err) {
-    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    // Capture as much as we can. Google API errors often have richer fields
+    // (code, details, status, metadata) than .message — and sometimes
+    // .message itself is "undefined undefined: undefined" because the
+    // library's own formatter received an empty error envelope.
+    const e = err as {
+      message?: string;
+      code?: unknown;
+      status?: unknown;
+      details?: unknown;
+      stack?: string;
+      response?: { data?: unknown };
+    };
+    const detail = [
+      e.message && `message=${e.message}`,
+      e.code !== undefined && `code=${e.code}`,
+      e.status !== undefined && `status=${e.status}`,
+      e.details !== undefined && `details=${JSON.stringify(e.details)}`,
+      e.response?.data !== undefined && `response.data=${JSON.stringify(e.response.data)}`,
+    ]
+      .filter(Boolean)
+      .join(' | ');
+    const composed = detail || String(err);
+    console.error(`[runFetchers] ${name} threw:`, composed);
+    if (e.stack) console.error(`[runFetchers] ${name} stack:`, e.stack);
+    return { ok: false, error: composed };
   }
 }
 
@@ -53,9 +77,9 @@ export async function runAllFetchers(): Promise<{
   const gscMod = await import('./fetchers/gsc.js');
 
   const [ga4Result, profoundResult, gscResult] = await Promise.all([
-    settle(ga4Mod.fetchGa4All()),
-    settle(profoundMod.fetchProfoundAll()),
-    settle(gscMod.fetchGscAll()),
+    settle('ga4', ga4Mod.fetchGa4All()),
+    settle('profound', profoundMod.fetchProfoundAll()),
+    settle('gsc', gscMod.fetchGscAll()),
   ]);
 
   return {
