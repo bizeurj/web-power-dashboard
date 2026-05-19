@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { signOut } from 'next-auth/react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { Snapshot, isErrorShape } from '@/lib/snapshot-types';
 import { isoToFriendly } from '@/lib/format';
 import { OverviewTab } from '@/components/tabs/OverviewTab';
@@ -10,8 +11,9 @@ import { PaidTab } from '@/components/tabs/PaidTab';
 import { AISearchTab } from '@/components/tabs/AISearchTab';
 import { ContentTab } from '@/components/tabs/ContentTab';
 import { WHLPTab } from '@/components/tabs/WHLPTab';
+import { InsightsPanel } from '@/components/InsightsPanel';
 
-type TabKey = 'overview' | 'traffic' | 'paid' | 'ai' | 'content' | 'whlp';
+export type TabKey = 'overview' | 'traffic' | 'paid' | 'ai' | 'content' | 'whlp';
 
 const TABS: { key: TabKey; label: string; badge?: string; badgeKind?: 'alert' | 'new' }[] = [
   { key: 'overview', label: 'Overview' },
@@ -22,12 +24,35 @@ const TABS: { key: TabKey; label: string; badge?: string; badgeKind?: 'alert' | 
   { key: 'whlp', label: 'WHLP' },
 ];
 
+const VALID_TABS = new Set(TABS.map((t) => t.key));
+
 export default function DashboardClient({ userEmail, userName }: { userEmail: string; userName: string }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const tabParam = searchParams.get('tab');
+  const tab: TabKey = (tabParam && VALID_TABS.has(tabParam as TabKey)) ? (tabParam as TabKey) : 'overview';
+  const drill = searchParams.get('drill') || null;
+
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [tab, setTab] = useState<TabKey>('overview');
+
+  const setTab = useCallback((next: TabKey) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', next);
+    params.delete('drill'); // leaving a tab clears any drill state
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [router, pathname, searchParams]);
+
+  const setDrill = useCallback((path: string | null) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (path) params.set('drill', path);
+    else params.delete('drill');
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [router, pathname, searchParams]);
 
   async function load() {
     setLoading(true);
@@ -68,9 +93,6 @@ export default function DashboardClient({ userEmail, userName }: { userEmail: st
     load();
   }, []);
 
-  const tabContent = snapshot ? renderTab(tab, snapshot) : null;
-
-  // Surface per-source errors as banner above the tabs.
   const sourceErrors: string[] = [];
   if (snapshot) {
     for (const [name, value] of Object.entries(snapshot.sources)) {
@@ -260,12 +282,22 @@ export default function DashboardClient({ userEmail, userName }: { userEmail: st
         </div>
       )}
 
-      {tabContent}
+      {snapshot && (
+        <>
+          <InsightsPanel snapshot={snapshot} tab={tab} />
+          {renderTab(tab, snapshot, drill, setDrill)}
+        </>
+      )}
     </div>
   );
 }
 
-function renderTab(tab: TabKey, snapshot: Snapshot): React.ReactNode {
+function renderTab(
+  tab: TabKey,
+  snapshot: Snapshot,
+  drill: string | null,
+  setDrill: (p: string | null) => void
+): React.ReactNode {
   switch (tab) {
     case 'overview':
       return <OverviewTab snapshot={snapshot} />;
@@ -276,7 +308,7 @@ function renderTab(tab: TabKey, snapshot: Snapshot): React.ReactNode {
     case 'ai':
       return <AISearchTab snapshot={snapshot} />;
     case 'content':
-      return <ContentTab snapshot={snapshot} />;
+      return <ContentTab snapshot={snapshot} drill={drill} setDrill={setDrill} />;
     case 'whlp':
       return <WHLPTab snapshot={snapshot} />;
   }

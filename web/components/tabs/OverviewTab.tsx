@@ -5,6 +5,7 @@ import { fmt, fmtPct, fmtSec, fmtMoney, fixed } from '@/lib/format';
 import { Card, ExecIntro, Insight, SectionTitle } from '@/components/shared/Card';
 import { KpiCard, KpiRow } from '@/components/shared/KpiCard';
 import { LineSeries, PALETTE } from '@/components/shared/Charts';
+import { TrendCompareCard } from '@/components/TrendCompareCard';
 
 export function OverviewTab({ snapshot }: { snapshot: Snapshot }) {
   const ga4 = getGa4(snapshot);
@@ -107,7 +108,7 @@ export function OverviewTab({ snapshot }: { snapshot: Snapshot }) {
           )}
         </Card>
 
-        <Card title="Paid (Google Ads)" accent="gold">
+        <Card title="Paid (Google Ads)" accent="gold" key="paid-card">
           {ads ? (
             <>
               <KpiRow cols={2}>
@@ -124,6 +125,8 @@ export function OverviewTab({ snapshot }: { snapshot: Snapshot }) {
           )}
         </Card>
       </div>
+
+      <TrendCompareCard />
     </div>
   );
 }

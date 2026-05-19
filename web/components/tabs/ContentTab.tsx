@@ -10,8 +10,20 @@ import { BarSeries, LineSeries, DoughnutSeries, PALETTE } from '@/components/sha
 import { DataTable, Column } from '@/components/shared/DataTable';
 import { DateRangePicker } from '@/components/shared/DateRangePicker';
 
-export function ContentTab({ snapshot }: { snapshot: Snapshot }) {
-  const [selectedPath, setSelectedPath] = useState<string | null>(null);
+export function ContentTab({
+  snapshot,
+  drill,
+  setDrill,
+}: {
+  snapshot: Snapshot;
+  drill?: string | null;
+  setDrill?: (path: string | null) => void;
+}) {
+  // Fall back to local state if parent doesn't manage drill (back-compat).
+  const [localDrill, setLocalDrill] = useState<string | null>(null);
+  const selectedPath = drill !== undefined ? drill : localDrill;
+  const select = (p: string | null) => (setDrill ? setDrill(p) : setLocalDrill(p));
+
   const rows = useMemo(() => buildContentRows(snapshot), [snapshot]);
 
   if (selectedPath) {
@@ -19,7 +31,7 @@ export function ContentTab({ snapshot }: { snapshot: Snapshot }) {
       <ContentDrillDown
         snapshot={snapshot}
         path={selectedPath}
-        onBack={() => setSelectedPath(null)}
+        onBack={() => select(null)}
       />
     );
   }
@@ -41,35 +53,6 @@ export function ContentTab({ snapshot }: { snapshot: Snapshot }) {
 
   const cols: Column<ContentRow>[] = [
     {
-      key: 'resonance',
-      label: 'Resonance',
-      align: 'right',
-      width: 90,
-      render: (r) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
-          <div
-            style={{
-              width: 50,
-              height: 6,
-              background: '#e4e7ed',
-              borderRadius: 999,
-              overflow: 'hidden',
-              flexShrink: 0,
-            }}
-          >
-            <div
-              style={{
-                width: `${r.resonance}%`,
-                height: '100%',
-                background: r.resonance > 60 ? 'var(--emerald)' : r.resonance > 30 ? 'var(--gold)' : 'var(--neutral)',
-              }}
-            />
-          </div>
-          <span style={{ fontWeight: 600, width: 26, textAlign: 'right' }}>{r.resonance}</span>
-        </div>
-      ),
-    },
-    {
       key: 'path',
       label: 'Page',
       render: (r) => (
@@ -79,7 +62,9 @@ export function ContentTab({ snapshot }: { snapshot: Snapshot }) {
         </div>
       ),
     },
-    { key: 'views', label: 'GA4 views', align: 'right', render: (r) => fmt(r.views) },
+    { key: 'views', label: 'Views', align: 'right', render: (r) => <span style={{ fontWeight: 600 }}>{fmt(r.views)}</span> },
+    { key: 'bounceRate', label: 'Bounce', align: 'right', render: (r) => fmtPct(r.bounceRate), sortValue: (r) => r.bounceRate },
+    { key: 'avgTimeSec', label: 'Avg time', align: 'right', render: (r) => fmtSec(r.avgTimeSec), sortValue: (r) => r.avgTimeSec },
     { key: 'gscClicks', label: 'GSC clicks', align: 'right', render: (r) => fmt(r.gscClicks) },
     { key: 'llmSessions', label: 'LLM sess', align: 'right', render: (r) => fmt(r.llmSessions) },
     {
@@ -88,7 +73,9 @@ export function ContentTab({ snapshot }: { snapshot: Snapshot }) {
       align: 'right',
       render: (r) => (
         <div>
-          <div style={{ fontWeight: 600 }}>{fmt(r.citations)}</div>
+          <div style={{ fontWeight: r.citations > 0 ? 600 : 400, color: r.citations > 0 ? 'var(--purple-deep)' : 'var(--muted)' }}>
+            {fmt(r.citations)}
+          </div>
           {r.citationCategory && (
             <div
               style={{
@@ -102,6 +89,27 @@ export function ContentTab({ snapshot }: { snapshot: Snapshot }) {
             </div>
           )}
         </div>
+      ),
+    },
+    {
+      key: 'resonance',
+      label: 'Score',
+      align: 'right',
+      width: 70,
+      render: (r) => (
+        <span
+          title="Composite of views (35%), GSC clicks (35%), LLM sessions (15%), AEO citations (15%)"
+          style={{
+            fontSize: 11,
+            padding: '2px 8px',
+            borderRadius: 999,
+            background: r.resonance > 60 ? 'var(--emerald-soft)' : r.resonance > 30 ? 'var(--gold-soft)' : 'var(--surface-2)',
+            color: r.resonance > 60 ? 'var(--emerald)' : r.resonance > 30 ? 'var(--gold-deep)' : 'var(--muted)',
+            fontWeight: 600,
+          }}
+        >
+          {r.resonance}
+        </span>
       ),
     },
   ];
@@ -130,9 +138,9 @@ export function ContentTab({ snapshot }: { snapshot: Snapshot }) {
         <DataTable
           columns={cols}
           rows={rows}
-          defaultSortKey="resonance"
+          defaultSortKey="views"
           pageSize={20}
-          onRowClick={(r) => setSelectedPath(r.path)}
+          onRowClick={(r) => select(r.path)}
         />
       </Card>
     </div>
