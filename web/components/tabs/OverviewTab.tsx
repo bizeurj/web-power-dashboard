@@ -1,7 +1,7 @@
 'use client';
 
 import { Snapshot, getGa4, getProfound, getGsc, getMainProperty, asArray } from '@/lib/snapshot-types';
-import { fmt, fmtPct, fmtSec, fmtMoney } from '@/lib/format';
+import { fmt, fmtPct, fmtSec, fmtMoney, fixed } from '@/lib/format';
 import { Card, ExecIntro, Insight, SectionTitle } from '@/components/shared/Card';
 import { KpiCard, KpiRow } from '@/components/shared/KpiCard';
 import { LineSeries, PALETTE } from '@/components/shared/Charts';
@@ -16,7 +16,9 @@ export function OverviewTab({ snapshot }: { snapshot: Snapshot }) {
     return <Card title="Overview">GA4 data not available in this snapshot.</Card>;
   }
 
-  const head = wh.headline;
+  const head = wh.headline || { current: {} as Record<string, number>, prior: {} as Record<string, number>, delta: {} as Record<string, number> };
+  const hCur = (head.current || {}) as Partial<Record<'sessions' | 'users' | 'bounceRate' | 'avgSessionDurationSec' | 'engagementRate' | 'pagesPerSession', number>>;
+  const hDelta = (head.delta || {}) as Partial<Record<string, number>>;
   const llmSessions = wh.llm?.totalSessions ?? 0;
   const llmShare = wh.llm?.shareOfTraffic ?? 0;
   const ads = wh.googleAds?.headline;
@@ -37,24 +39,24 @@ export function OverviewTab({ snapshot }: { snapshot: Snapshot }) {
         <KpiRow cols={4}>
           <KpiCard
             label="Sessions"
-            value={fmt(head.current.sessions)}
-            delta={head.delta.sessions}
+            value={fmt(hCur.sessions)}
+            delta={hDelta.sessions}
             hero="purple"
           />
           <KpiCard
             label="Users"
-            value={fmt(head.current.users)}
-            delta={head.delta.users}
+            value={fmt(hCur.users)}
+            delta={hDelta.users}
           />
           <KpiCard
             label="Avg session"
-            value={fmtSec(head.current.avgSessionDurationSec)}
-            delta={head.delta.avgSessionDurationSec}
+            value={fmtSec(hCur.avgSessionDurationSec)}
+            delta={hDelta.avgSessionDurationSec}
           />
           <KpiCard
             label="Bounce rate"
-            value={fmtPct(head.current.bounceRate)}
-            delta={head.delta.bounceRate}
+            value={fmtPct(hCur.bounceRate)}
+            delta={hDelta.bounceRate}
             deltaLowerIsBetter
           />
         </KpiRow>
@@ -73,7 +75,7 @@ export function OverviewTab({ snapshot }: { snapshot: Snapshot }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
         <Card title="Organic search" accent="emerald">
-          {gsc ? (
+          {gsc && gsc.headline ? (
             <>
               <KpiRow cols={2}>
                 <KpiCard label="Clicks" value={fmt(gsc.headline.clicks)} delta={gsc.headlineDelta?.clicks} hero="emerald" />
@@ -81,7 +83,7 @@ export function OverviewTab({ snapshot }: { snapshot: Snapshot }) {
               </KpiRow>
               <KpiRow cols={2}>
                 <KpiCard label="CTR" value={fmtPct(gsc.headline.ctr, 2)} delta={gsc.headlineDelta?.ctr} />
-                <KpiCard label="Avg position" value={gsc.headline.position.toFixed(1)} delta={gsc.headlineDelta?.position} deltaLowerIsBetter />
+                <KpiCard label="Avg position" value={fixed(gsc.headline.position, 1)} delta={gsc.headlineDelta?.position} deltaLowerIsBetter />
               </KpiRow>
             </>
           ) : (
@@ -114,7 +116,7 @@ export function OverviewTab({ snapshot }: { snapshot: Snapshot }) {
               </KpiRow>
               <KpiRow cols={2}>
                 <KpiCard label="Clicks" value={fmt(ads.clicks)} delta={wh.googleAds?.headlineDelta?.clicks} />
-                <KpiCard label="CPC" value={'$' + ads.cpc.toFixed(2)} delta={wh.googleAds?.headlineDelta?.cpc} deltaLowerIsBetter />
+                <KpiCard label="CPC" value={'$' + fixed(ads.cpc, 2, '0.00')} delta={wh.googleAds?.headlineDelta?.cpc} deltaLowerIsBetter />
               </KpiRow>
             </>
           ) : (

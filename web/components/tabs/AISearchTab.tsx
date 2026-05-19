@@ -1,7 +1,7 @@
 'use client';
 
 import { Snapshot, getGa4, getProfound, getMainProperty, asArray } from '@/lib/snapshot-types';
-import { fmt, fmtPct, fmtSec } from '@/lib/format';
+import { fmt, fmtPct, fmtSec, fixed } from '@/lib/format';
 import { Card, ExecIntro, Insight, SectionTitle } from '@/components/shared/Card';
 import { KpiCard, KpiRow } from '@/components/shared/KpiCard';
 import { BarSeries, DoughnutSeries, LineSeries, PALETTE } from '@/components/shared/Charts';
@@ -36,7 +36,7 @@ export function AISearchTab({ snapshot }: { snapshot: Snapshot }) {
     { key: 'users', label: 'Users', align: 'right', render: (r) => fmt(r.users), sortValue: (r) => r.users ?? 0 },
     { key: 'bounceRate', label: 'Bounce', align: 'right', render: (r) => fmtPct(r.bounceRate), sortValue: (r) => r.bounceRate ?? 0 },
     { key: 'avgSessionDurationSec', label: 'Avg time', align: 'right', render: (r) => fmtSec(r.avgSessionDurationSec), sortValue: (r) => r.avgSessionDurationSec ?? 0 },
-    { key: 'pagesPerSession', label: 'Pages/s', align: 'right', render: (r) => (r.pagesPerSession ?? 0).toFixed(2), sortValue: (r) => r.pagesPerSession ?? 0 },
+    { key: 'pagesPerSession', label: 'Pages/s', align: 'right', render: (r) => fixed(r.pagesPerSession, 2, '0.00'), sortValue: (r) => r.pagesPerSession ?? 0 },
   ];
 
   const domainCols: Column<Domain>[] = [
@@ -116,7 +116,7 @@ export function AISearchTab({ snapshot }: { snapshot: Snapshot }) {
               { name: 'Visibility', data: profound.ytd.map((m) => m[1] * 100), color: PALETTE.purple, fill: true },
             ]}
             height={220}
-            yFormatter={(n) => n.toFixed(1) + '%'}
+            yFormatter={(n) => fixed(n, 1, '0') + '%'}
           />
         </Card>
       )}

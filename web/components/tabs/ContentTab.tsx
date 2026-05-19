@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Snapshot, getGa4, getMainProperty, asArray } from '@/lib/snapshot-types';
 import { buildContentRows, buildContentDetail, ContentRow, DateRange, RANGE_LABELS } from '@/lib/content-resonance';
-import { fmt, fmtPct, fmtSec } from '@/lib/format';
+import { fmt, fmtPct, fmtSec, fixed } from '@/lib/format';
 import { Card, ExecIntro, Insight, SectionTitle } from '@/components/shared/Card';
 import { KpiCard, KpiRow } from '@/components/shared/KpiCard';
 import { BarSeries, LineSeries, DoughnutSeries, PALETTE } from '@/components/shared/Charts';
@@ -315,7 +315,7 @@ function ContentDrillDown({
           <KpiCard label="Clicks" value={fmt(row.gscClicks)} hero="emerald" />
           <KpiCard label="Impressions" value={fmt(row.gscImpressions)} />
           <KpiCard label="CTR" value={fmtPct(row.gscCtr, 2)} />
-          <KpiCard label="Avg position" value={row.gscPosition.toFixed(1)} />
+          <KpiCard label="Avg position" value={fixed(row.gscPosition, 1, '-')} />
         </KpiRow>
         <Insight tone="info" icon="i">
           Per-page query breakdown will land in v1.1 (requires a per-page GSC query pull). For now, the AI Search tab shows the top queries driving the entire site.

@@ -1,7 +1,7 @@
 'use client';
 
 import { Snapshot, getGa4, getMainProperty, asArray } from '@/lib/snapshot-types';
-import { fmt, fmtPct, fmtSec } from '@/lib/format';
+import { fmt, fmtPct, fmtSec, fixed } from '@/lib/format';
 import { Card, ExecIntro, SectionTitle } from '@/components/shared/Card';
 import { KpiCard, KpiRow } from '@/components/shared/KpiCard';
 import { LineSeries, BarSeries, DoughnutSeries, PALETTE } from '@/components/shared/Charts';
@@ -78,7 +78,7 @@ export function TrafficTab({ snapshot }: { snapshot: Snapshot }) {
         <KpiRow cols={4}>
           <KpiCard label="Sessions" value={fmt(wh.headline.current.sessions)} delta={wh.headline.delta.sessions} hero="purple" />
           <KpiCard label="Users" value={fmt(wh.headline.current.users)} delta={wh.headline.delta.users} />
-          <KpiCard label="Pages/session" value={(wh.headline.current.pagesPerSession ?? 0).toFixed(2)} />
+          <KpiCard label="Pages/session" value={fixed(wh.headline.current?.pagesPerSession, 2, '0.00')} />
           <KpiCard label="Engagement" value={fmtPct(wh.headline.current.engagementRate)} delta={wh.headline.delta.engagementRate} />
         </KpiRow>
       </Card>

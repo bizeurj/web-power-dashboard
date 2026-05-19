@@ -62,6 +62,26 @@ export function isoToFriendly(iso: string): string {
   }
 }
 
+/** Coerce unknown to a finite number, with a fallback. Avoids .toFixed crashes on undefined/null/NaN/string. */
+export function num(v: unknown, fallback = 0): number {
+  if (typeof v === 'number' && Number.isFinite(v)) return v;
+  if (typeof v === 'string') {
+    const n = Number(v);
+    if (Number.isFinite(n)) return n;
+  }
+  return fallback;
+}
+
+/** Safely format a number with toFixed semantics, defaulting if value is missing. */
+export function fixed(v: unknown, digits = 1, fallback = '-'): string {
+  if (typeof v === 'number' && Number.isFinite(v)) return v.toFixed(digits);
+  if (typeof v === 'string') {
+    const n = Number(v);
+    if (Number.isFinite(n)) return n.toFixed(digits);
+  }
+  return fallback;
+}
+
 /** Normalize various page-path shapes (with/without leading slash, with hostname) into a comparable key. */
 export function pageKey(input: string): string {
   if (!input) return '';
