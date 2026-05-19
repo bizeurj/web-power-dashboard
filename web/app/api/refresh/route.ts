@@ -58,10 +58,19 @@ export async function POST(req: NextRequest) {
     await writeSnapshot(snapshot);
 
     const sources = snapshot.sources as Record<string, { error?: string } | unknown>;
-    const sourceStatus: Record<string, 'ok' | 'error'> = {};
+    const sourceStatus: Record<
+      string,
+      { status: 'ok' } | { status: 'error'; message: string }
+    > = {};
     for (const [name, value] of Object.entries(sources)) {
-      const hasError = !!(value && typeof value === 'object' && 'error' in value);
-      sourceStatus[name] = hasError ? 'error' : 'ok';
+      if (value && typeof value === 'object' && 'error' in value) {
+        const msg = String((value as { error: unknown }).error).slice(0, 800);
+        sourceStatus[name] = { status: 'error', message: msg };
+        // Mirror to function logs so Vercel Logs view also surfaces the cause.
+        console.error(`[refresh] ${name} failed:`, msg);
+      } else {
+        sourceStatus[name] = { status: 'ok' };
+      }
     }
 
     // Note: we intentionally do NOT return the Blob URLs here. Even though
