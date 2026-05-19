@@ -8,7 +8,10 @@ import 'dotenv/config';
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
 import { fileURLToPath } from 'node:url';
 
-const client = new BetaAnalyticsDataClient();
+// fallback: 'rest' forces REST/HTTP transport instead of the default gRPC.
+// Required for Vercel serverless (gRPC's long-lived HTTP/2 doesn't work in
+// short-lived function runtimes). Kept here too so local dev matches prod.
+const client = new BetaAnalyticsDataClient({ fallback: 'rest' });
 
 /**
  * Format a Date as YYYY-MM-DD (UTC).

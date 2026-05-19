@@ -8,7 +8,13 @@ import 'dotenv/config';
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
 import { fileURLToPath } from 'node:url';
 
-const client = new BetaAnalyticsDataClient();
+// fallback: 'rest' forces REST/HTTP transport instead of the default gRPC.
+// gRPC needs long-lived HTTP/2 connections and fails with cryptic
+// "undefined undefined: undefined" errors inside Vercel serverless functions
+// because the function lifecycle is too short for gRPC to handshake reliably.
+// REST works identically in local dev (slightly slower but indistinguishable
+// at our request volumes), so we use it unconditionally for simplicity.
+const client = new BetaAnalyticsDataClient({ fallback: 'rest' });
 
 /**
  * Format a Date as YYYY-MM-DD (UTC).
