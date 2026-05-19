@@ -38,23 +38,7 @@ export const authOptions: NextAuthOptions = {
 
       const domainOk = domainAllowlist.includes(domain);
       const emailOk = emailAllowlist.includes(email);
-      const result = domainOk || emailOk;
-
-      // TEMPORARY DIAGNOSTIC: prints to Vercel function logs so we can see
-      // exactly what the callback sees. Remove this block once sign-in works.
-      console.log('[auth.signIn]', JSON.stringify({
-        email,
-        domain,
-        domainAllowlist,
-        emailAllowlist,
-        domainOk,
-        emailOk,
-        result,
-        ALLOWED_EMAILS_set: !!process.env.ALLOWED_EMAILS,
-        ALLOWED_EMAIL_DOMAINS_set: !!process.env.ALLOWED_EMAIL_DOMAINS,
-      }));
-
-      return result;
+      return domainOk || emailOk;
     },
     async session({ session, token }) {
       // Surface a stable user identifier on the session for downstream UI.
