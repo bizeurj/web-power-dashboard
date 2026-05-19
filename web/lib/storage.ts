@@ -1,9 +1,10 @@
 /**
  * Snapshot storage abstraction.
  *
- * In production (on Vercel) snapshots live in Vercel Blob — the serverless
- * filesystem is read-only and ephemeral so we cannot use disk for anything
- * that needs to persist across invocations.
+ * In production (on Vercel) snapshots live in a PRIVATE Vercel Blob store.
+ * Private blobs require the BLOB_READ_WRITE_TOKEN to read, so URLs cannot
+ * be useful to anyone who isn't holding the token. We never return URLs
+ * from this module; only parsed JSON.
  *
  * In local dev (when BLOB_READ_WRITE_TOKEN is not set) we fall back to the
  * legacy on-disk snapshot at ../data/snapshot.json so the existing
@@ -13,11 +14,11 @@
  *   snapshots/latest.json            — pointer to the newest snapshot
  *   snapshots/YYYY-MM-DD.json        — archived daily snapshot
  *
- * `latest.json` is always overwritten on each refresh. Archive blobs are
- * additive so we accumulate trend history.
+ * `latest.json` is overwritten on each refresh. Archive blobs are additive
+ * so trend history accumulates.
  */
 
-import { put, list, head } from '@vercel/blob';
+import { put, get, list } from '@vercel/blob';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -29,10 +30,10 @@ function isBlobConfigured(): boolean {
 }
 
 /**
- * Write a fresh snapshot. Saves both the canonical "latest" pointer and a
- * date-stamped archive copy so trend history accumulates.
+ * Write a fresh snapshot. Returns nothing — URLs intentionally stay
+ * server-side so they can't leak via logs or API responses.
  */
-export async function writeSnapshot(snapshot: unknown): Promise<{ latestUrl: string; archiveUrl: string }> {
+export async function writeSnapshot(snapshot: unknown): Promise<void> {
   const body = JSON.stringify(snapshot, null, 2);
   const stamp = new Date().toISOString().slice(0, 10);
   const archiveKey = `${ARCHIVE_PREFIX}${stamp}.json`;
@@ -45,30 +46,29 @@ export async function writeSnapshot(snapshot: unknown): Promise<{ latestUrl: str
     await fs.mkdir(snapshotsDir, { recursive: true });
     await fs.writeFile(path.join(dataDir, 'snapshot.json'), body);
     await fs.writeFile(path.join(snapshotsDir, `${stamp}.json`), body);
-    return {
-      latestUrl: `file://${path.join(dataDir, 'snapshot.json')}`,
-      archiveUrl: `file://${path.join(snapshotsDir, `${stamp}.json`)}`,
-    };
+    return;
   }
 
-  // Production: write both blobs. addRandomSuffix:false keeps stable keys
-  // (latest.json + YYYY-MM-DD.json). In @vercel/blob 0.27.x, putting to an
-  // existing pathname overwrites in place by default — no extra flag needed.
-  // (If we ever bump to 1.x, add `allowOverwrite: true` to both options.)
-  const [latest, archive] = await Promise.all([
+  // Production: write both blobs to the private store.
+  // - access: 'private' matches the store's configured access mode.
+  // - addRandomSuffix: false keeps stable keys (latest.json, YYYY-MM-DD.json).
+  // - allowOverwrite: true is required for re-writing the same key (latest
+  //   gets overwritten every run; archive could be re-written if cron runs
+  //   twice in one day).
+  await Promise.all([
     put(LATEST_KEY, body, {
-      access: 'public',
+      access: 'private',
       contentType: 'application/json',
       addRandomSuffix: false,
+      allowOverwrite: true,
     }),
     put(archiveKey, body, {
-      access: 'public',
+      access: 'private',
       contentType: 'application/json',
       addRandomSuffix: false,
+      allowOverwrite: true,
     }),
   ]);
-
-  return { latestUrl: latest.url, archiveUrl: archive.url };
 }
 
 /**
@@ -86,14 +86,7 @@ export async function readLatestSnapshot(): Promise<unknown | null> {
     }
   }
 
-  try {
-    const meta = await head(LATEST_KEY);
-    const res = await fetch(meta.url, { cache: 'no-store' });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
+  return readPrivateJson(LATEST_KEY);
 }
 
 /**
@@ -136,11 +129,20 @@ export async function readSnapshotByDate(date: string): Promise<unknown | null> 
     }
   }
 
+  return readPrivateJson(`${ARCHIVE_PREFIX}${date}.json`);
+}
+
+/**
+ * Read a private blob and parse it as JSON. Uses the v2 SDK's get() with
+ * access: 'private', which handles token authentication automatically.
+ * Returns null if the blob doesn't exist or can't be parsed.
+ */
+async function readPrivateJson(pathname: string): Promise<unknown | null> {
   try {
-    const meta = await head(`${ARCHIVE_PREFIX}${date}.json`);
-    const res = await fetch(meta.url, { cache: 'no-store' });
-    if (!res.ok) return null;
-    return await res.json();
+    const result = await get(pathname, { access: 'private' });
+    if (!result || result.statusCode !== 200 || !result.stream) return null;
+    const text = await new Response(result.stream).text();
+    return JSON.parse(text);
   } catch {
     return null;
   }

@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
   const startedAt = Date.now();
   try {
     const snapshot = await runAllFetchers();
-    const { latestUrl, archiveUrl } = await writeSnapshot(snapshot);
+    await writeSnapshot(snapshot);
 
     const sources = snapshot.sources as Record<string, { error?: string } | unknown>;
     const sourceStatus: Record<string, 'ok' | 'error'> = {};
@@ -64,13 +64,15 @@ export async function POST(req: NextRequest) {
       sourceStatus[name] = hasError ? 'error' : 'ok';
     }
 
+    // Note: we intentionally do NOT return the Blob URLs here. Even though
+    // the blobs are private (token-required), keeping URLs out of API
+    // responses avoids them leaking into Vercel function logs, browser
+    // DevTools, or anywhere else a non-token-holder might glimpse them.
     return NextResponse.json({
       ok: true,
       ranAt: snapshot.generatedAt,
       durationMs: Date.now() - startedAt,
       sources: sourceStatus,
-      latestUrl,
-      archiveUrl,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
