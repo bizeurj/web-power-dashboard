@@ -150,7 +150,24 @@ export function getGsc(snapshot: Snapshot): GscSource | null {
 }
 
 export function getMainProperty(ga4: Ga4Source | null): Ga4Property | null {
-  if (!ga4 || !ga4.properties || ga4.properties.length === 0) return null;
+  if (!ga4 || !Array.isArray(ga4.properties) || ga4.properties.length === 0) return null;
   // First property is workhuman.com per orchestrator convention.
   return ga4.properties[0];
+}
+
+/**
+ * Defensive array coercion. The snapshot's `topDomains`, `topUrls`, etc. are
+ * supposed to be arrays of tuples but Profound has been observed returning
+ * either an empty object `{}` when there are no results, or a wrapping object
+ * like `{ items: [...] }`. This helper returns an array no matter what.
+ */
+export function asArray<T>(v: unknown): T[] {
+  if (Array.isArray(v)) return v as T[];
+  if (v && typeof v === 'object') {
+    const obj = v as { items?: unknown; data?: unknown; results?: unknown };
+    if (Array.isArray(obj.items)) return obj.items as T[];
+    if (Array.isArray(obj.data)) return obj.data as T[];
+    if (Array.isArray(obj.results)) return obj.results as T[];
+  }
+  return [];
 }

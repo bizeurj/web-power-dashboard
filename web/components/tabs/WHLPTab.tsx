@@ -1,6 +1,6 @@
 'use client';
 
-import { Snapshot, getGa4 } from '@/lib/snapshot-types';
+import { Snapshot, getGa4, asArray } from '@/lib/snapshot-types';
 import { fmt, fmtPct, fmtSec } from '@/lib/format';
 import { Card, ExecIntro } from '@/components/shared/Card';
 import { KpiCard, KpiRow } from '@/components/shared/KpiCard';
@@ -13,7 +13,8 @@ export function WHLPTab({ snapshot }: { snapshot: Snapshot }) {
   const ga4 = getGa4(snapshot);
   // WHLP is the second property in the array (whlp.workhuman.com), if present.
   // Some setups treat it as the same propertyId with a hostname filter — find by name.
-  const whlp = ga4?.properties?.find((p) => p.site.includes('whlp')) || ga4?.properties?.[1];
+  const props = Array.isArray(ga4?.properties) ? ga4!.properties : [];
+  const whlp = props.find((p) => typeof p.site === 'string' && p.site.includes('whlp')) || props[1];
 
   if (!whlp) {
     return (
@@ -52,10 +53,10 @@ export function WHLPTab({ snapshot }: { snapshot: Snapshot }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
         <Card title="Source / Medium">
-          <DataTable columns={sourceCols} rows={whlp.sources || []} defaultSortKey="sessions" />
+          <DataTable columns={sourceCols} rows={asArray<SourceRow>(whlp.sources)} defaultSortKey="sessions" />
         </Card>
         <Card title="Top pages">
-          <DataTable columns={pageCols} rows={whlp.pages || []} defaultSortKey="views" pageSize={10} />
+          <DataTable columns={pageCols} rows={asArray<PageRow>(whlp.pages)} defaultSortKey="views" pageSize={10} />
         </Card>
       </div>
     </div>

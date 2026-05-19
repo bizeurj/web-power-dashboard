@@ -1,6 +1,6 @@
 'use client';
 
-import { Snapshot, getGa4, getProfound, getGsc, getMainProperty } from '@/lib/snapshot-types';
+import { Snapshot, getGa4, getProfound, getGsc, getMainProperty, asArray } from '@/lib/snapshot-types';
 import { fmt, fmtPct, fmtSec, fmtMoney } from '@/lib/format';
 import { Card, ExecIntro, Insight, SectionTitle } from '@/components/shared/Card';
 import { KpiCard, KpiRow } from '@/components/shared/KpiCard';
@@ -21,8 +21,9 @@ export function OverviewTab({ snapshot }: { snapshot: Snapshot }) {
   const llmShare = wh.llm?.shareOfTraffic ?? 0;
   const ads = wh.googleAds?.headline;
 
-  const profoundWh = profound?.content?.topDomains?.find(
-    (d) => d[0].toLowerCase().includes('workhuman')
+  const topDomains = asArray<[string, number, string?]>(profound?.content?.topDomains);
+  const profoundWh = topDomains.find(
+    (d) => Array.isArray(d) && typeof d[0] === 'string' && d[0].toLowerCase().includes('workhuman')
   );
 
   return (
@@ -60,10 +61,10 @@ export function OverviewTab({ snapshot }: { snapshot: Snapshot }) {
 
         <SectionTitle>30-day session trend (vs prior period)</SectionTitle>
         <LineSeries
-          labels={wh.daily.map((_, i) => `D${i + 1}`)}
+          labels={asArray<number>(wh.daily).map((_, i) => `D${i + 1}`)}
           series={[
-            { name: 'Last 30d', data: wh.daily, color: PALETTE.primary, fill: true },
-            { name: 'Prior 30d', data: wh.dailyPrior, color: PALETTE.neutral },
+            { name: 'Last 30d', data: asArray<number>(wh.daily), color: PALETTE.primary, fill: true },
+            { name: 'Prior 30d', data: asArray<number>(wh.dailyPrior), color: PALETTE.neutral },
           ]}
           height={220}
           yFormatter={(n) => fmt(n)}

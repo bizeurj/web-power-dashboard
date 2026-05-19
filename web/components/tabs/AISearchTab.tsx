@@ -1,6 +1,6 @@
 'use client';
 
-import { Snapshot, getGa4, getProfound, getMainProperty } from '@/lib/snapshot-types';
+import { Snapshot, getGa4, getProfound, getMainProperty, asArray } from '@/lib/snapshot-types';
 import { fmt, fmtPct, fmtSec } from '@/lib/format';
 import { Card, ExecIntro, Insight, SectionTitle } from '@/components/shared/Card';
 import { KpiCard, KpiRow } from '@/components/shared/KpiCard';
@@ -16,16 +16,18 @@ export function AISearchTab({ snapshot }: { snapshot: Snapshot }) {
   const profound = getProfound(snapshot);
   const wh = getMainProperty(ga4);
 
-  const referrers = wh?.llm?.referrers || [];
+  const referrers = asArray<Referrer>(wh?.llm?.referrers);
   const llmSessions = wh?.llm?.totalSessions || 0;
   const llmShare = wh?.llm?.shareOfTraffic || 0;
 
-  const byModel = profound?.content?.byModel || [];
-  const topPrompts = profound?.content?.topPrompts || [];
-  const topDomains = profound?.content?.topDomains || [];
-  const byCategory = profound?.content?.byCitationCategory || [];
+  const byModel = asArray<[string, number]>(profound?.content?.byModel);
+  const topPrompts = asArray<Prompt>(profound?.content?.topPrompts);
+  const topDomains = asArray<Domain>(profound?.content?.topDomains);
+  const byCategory = asArray<[string, number]>(profound?.content?.byCitationCategory);
 
-  const whDomain = topDomains.find((d) => d[0].toLowerCase().includes('workhuman'));
+  const whDomain = topDomains.find(
+    (d) => Array.isArray(d) && typeof d[0] === 'string' && d[0].toLowerCase().includes('workhuman')
+  );
   const whRank = whDomain ? topDomains.findIndex((d) => d === whDomain) + 1 : null;
 
   const referrerCols: Column<Referrer>[] = [

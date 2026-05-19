@@ -19,9 +19,7 @@ import {
   getProfound,
   getGsc,
   getMainProperty,
-  Ga4Property,
-  GscSource,
-  ProfoundSource,
+  asArray,
 } from './snapshot-types';
 import { pageKey } from './format';
 
@@ -66,7 +64,7 @@ export function buildContentRows(snapshot: Snapshot): ContentRow[] {
   const byPath = new Map<string, ContentRow>();
 
   // Seed from GA4 pages — these are the universe of pages we care about.
-  for (const p of wh.pages || []) {
+  for (const p of asArray<{ path: string; title?: string; views: number; avgSessionDurationSec?: number; bounceRate?: number }>(wh.pages)) {
     const k = pageKey(p.path);
     byPath.set(k, {
       path: k,
@@ -86,8 +84,9 @@ export function buildContentRows(snapshot: Snapshot): ContentRow[] {
   }
 
   // Merge GSC pages.
-  if (gsc?.pages) {
-    for (const p of gsc.pages) {
+  const gscPages = asArray<{ page: string; clicks: number; impressions: number; ctr: number; position: number }>(gsc?.pages);
+  if (gscPages.length > 0) {
+    for (const p of gscPages) {
       const k = pageKey(p.page);
       const existing = byPath.get(k);
       if (existing) {
@@ -116,8 +115,9 @@ export function buildContentRows(snapshot: Snapshot): ContentRow[] {
   }
 
   // Merge LLM landing pages.
-  if (wh.llm?.landingPages) {
-    for (const lp of wh.llm.landingPages) {
+  const llmLandingPages = asArray<{ landingPage: string; sessions: number }>(wh.llm?.landingPages);
+  if (llmLandingPages.length > 0) {
+    for (const lp of llmLandingPages) {
       const k = pageKey(lp.landingPage);
       const existing = byPath.get(k);
       if (existing) {
@@ -129,8 +129,10 @@ export function buildContentRows(snapshot: Snapshot): ContentRow[] {
   // Merge Profound citation counts (topUrls + urlsByCategory).
   // The Profound URL strings are typically `host/path` without protocol;
   // we strip the host to compare path-only.
-  if (profound?.content?.topUrls) {
-    for (const u of profound.content.topUrls) {
+  const topUrls = asArray<[string, number, string?, string?]>(profound?.content?.topUrls);
+  if (topUrls.length > 0) {
+    for (const u of topUrls) {
+      if (!Array.isArray(u) || typeof u[0] !== 'string') continue;
       const url = u[0]; // e.g. "workhuman.com/blog/employee-recognition-software/"
       const cat = u[3] || u[2];
       if (!url.includes('workhuman.com')) continue;
@@ -213,9 +215,12 @@ export function buildContentDetail(snapshot: Snapshot, path: string): ContentDet
   const wh = getMainProperty(ga4);
 
   const topicAppearances: Array<{ topic: string; citations: number; category?: string }> = [];
-  const urlsByTopic = profound?.content?.urlsByTopic || {};
+  const urlsByTopic = (profound?.content?.urlsByTopic && typeof profound.content.urlsByTopic === 'object')
+    ? profound.content.urlsByTopic
+    : {};
   for (const [topic, urls] of Object.entries(urlsByTopic)) {
-    for (const u of urls) {
+    for (const u of asArray<[string, number, string?]>(urls)) {
+      if (!Array.isArray(u) || typeof u[0] !== 'string') continue;
       const url = u[0];
       if (!url.includes('workhuman.com')) continue;
       const urlPath = pageKey(url.replace(/^[^/]+/, ''));
@@ -228,10 +233,10 @@ export function buildContentDetail(snapshot: Snapshot, path: string): ContentDet
 
   return {
     row,
-    siteSessions: wh?.headline.current.sessions || 0,
-    siteGscClicks: gsc?.headline.clicks || 0,
+    siteSessions: wh?.headline?.current?.sessions || 0,
+    siteGscClicks: gsc?.headline?.clicks || 0,
     topicAppearances,
-    siteDaily: wh?.daily || [],
+    siteDaily: asArray<number>(wh?.daily),
   };
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Snapshot, getGa4, getMainProperty } from '@/lib/snapshot-types';
+import { Snapshot, getGa4, getMainProperty, asArray } from '@/lib/snapshot-types';
 import { fmt, fmtPct, fmtSec } from '@/lib/format';
 import { Card, ExecIntro, SectionTitle } from '@/components/shared/Card';
 import { KpiCard, KpiRow } from '@/components/shared/KpiCard';
@@ -58,7 +58,13 @@ export function TrafficTab({ snapshot }: { snapshot: Snapshot }) {
     },
   ];
 
-  const topSources = (wh.sources || []).slice(0, 12);
+  const whSources = asArray<SourceRow>(wh.sources);
+  const whPages = asArray<PageRow>(wh.pages);
+  const whMonthly = asArray<{ yearMonth: string; sessions: number }>(wh.monthly);
+  const whDaily = asArray<number>(wh.daily);
+  const whDailyPrior = asArray<number>(wh.dailyPrior);
+
+  const topSources = whSources.slice(0, 12);
   const sourceTotal = topSources.reduce((s, r) => s + r.sessions, 0);
 
   return (
@@ -79,10 +85,10 @@ export function TrafficTab({ snapshot }: { snapshot: Snapshot }) {
 
       <Card title="30-day session trend">
         <LineSeries
-          labels={wh.daily.map((_, i) => `D${i + 1}`)}
+          labels={whDaily.map((_, i) => `D${i + 1}`)}
           series={[
-            { name: 'Last 30d', data: wh.daily, color: PALETTE.primary, fill: true },
-            { name: 'Prior 30d', data: wh.dailyPrior, color: PALETTE.neutral },
+            { name: 'Last 30d', data: whDaily, color: PALETTE.primary, fill: true },
+            { name: 'Prior 30d', data: whDailyPrior, color: PALETTE.neutral },
           ]}
           height={260}
           yFormatter={(n) => fmt(n)}
@@ -110,18 +116,18 @@ export function TrafficTab({ snapshot }: { snapshot: Snapshot }) {
         <Card title="Top pages">
           <DataTable
             columns={pageCols}
-            rows={wh.pages.slice(0, 15)}
+            rows={whPages.slice(0, 15)}
             defaultSortKey="views"
             pageSize={10}
           />
         </Card>
       </div>
 
-      {wh.monthly && wh.monthly.length > 0 && (
+      {whMonthly.length > 0 && (
         <Card title="Monthly history">
           <BarSeries
-            labels={wh.monthly.map((m) => m.yearMonth)}
-            series={[{ name: 'Sessions', data: wh.monthly.map((m) => m.sessions), color: PALETTE.primary }]}
+            labels={whMonthly.map((m) => m.yearMonth)}
+            series={[{ name: 'Sessions', data: whMonthly.map((m) => m.sessions), color: PALETTE.primary }]}
             height={220}
             yFormatter={(n) => fmt(n)}
           />

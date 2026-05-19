@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Snapshot, getGa4, getMainProperty } from '@/lib/snapshot-types';
+import { Snapshot, getGa4, getMainProperty, asArray } from '@/lib/snapshot-types';
 import { buildContentRows, buildContentDetail, ContentRow, DateRange, RANGE_LABELS } from '@/lib/content-resonance';
 import { fmt, fmtPct, fmtSec } from '@/lib/format';
 import { Card, ExecIntro, Insight, SectionTitle } from '@/components/shared/Card';
@@ -184,7 +184,8 @@ function ContentDrillDown({
   // Build medium breakdown for this page using site-level sources weighted
   // by this page's share of total views (approximation — real per-page
   // medium would need a new fetcher call).
-  const mediumBreakdown = (wh?.sources || []).slice(0, 8).map((s) => ({
+  const whSources = asArray<{ sourceMedium: string; sessions: number }>(wh?.sources);
+  const mediumBreakdown = whSources.slice(0, 8).map((s) => ({
     medium: s.sourceMedium,
     estimatedSessions: Math.round(s.sessions * trafficShareOfSite),
   }));
