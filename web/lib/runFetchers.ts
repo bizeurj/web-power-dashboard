@@ -43,11 +43,14 @@ export async function runAllFetchers(): Promise<{
 
   const startedAt = Date.now();
 
-  // Sibling ESM JS modules. tsconfig allows JS imports via allowJs/checkJs
-  // defaults; treated as `any` at the boundary which is fine.
-  const ga4Mod = await import('../../src/fetchers/ga4.js');
-  const profoundMod = await import('../../src/fetchers/profound.js');
-  const gscMod = await import('../../src/fetchers/gsc.js');
+  // Local ESM JS fetchers. These are copies of /src/fetchers/* placed inside
+  // web/ so webpack can resolve their npm imports (dotenv, googleapis, etc.)
+  // against web/node_modules during the Vercel build. The /src/fetchers/*
+  // copies still exist for the local `npm run fetch` CLI workflow.
+  // If you change one, mirror the change in the other.
+  const ga4Mod = await import('./fetchers/ga4.js');
+  const profoundMod = await import('./fetchers/profound.js');
+  const gscMod = await import('./fetchers/gsc.js');
 
   const [ga4Result, profoundResult, gscResult] = await Promise.all([
     settle(ga4Mod.fetchGa4All()),
